@@ -1,0 +1,13 @@
+[Unit]
+Description=CoWin Alert daemon
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=python /FIXME/cowin-pincode-alert/main.py
+Restart=on-failure
+StartLimitBurst=3
+StartLimitInterval=60s
+
+[Install]
+WantedBy=multi-user.target
