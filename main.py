@@ -3,6 +3,7 @@ from subprocess import call
 import json
 import datetime
 import time
+import urllib.error
 
 # import cowin libaries
 from cowin import CoWinAPI
@@ -27,15 +28,25 @@ def getDatesForaWeek():
 def getVaccineDataForaWeek(cowin, pincode):
 
     vaccineData = {}
+    noDataForWholeWeek = True
 
     for date in getDatesForaWeek():
         temp = cowin.get_availability_by_pincode(
             pincode, date.strftime("%d-%m-%y"))
+
+        if isinstance(temp, urllib.error.HTTPError):
+            print('Some HTTP Error', e.code, " ", e.reason, " ", e.headers)
+            continue
+
         if len(temp) == 0:
             print('No data available for {pincode} for {datee}')
             continue
 
         vaccineData[date] = temp['sessions']
+        noDataForWholeWeek = False
+
+    if noDataForWholeWeek:
+        raise "No data available for whole week"
 
     return vaccineData
 
@@ -61,7 +72,13 @@ prevVaccineData = {}
 
 while True:
     print('='*10, f'Running {datetime.datetime.now()}')
-    vaccineData = getVaccineDataForaWeek(cowin, pin_code)
+    try:
+        vaccineData = getVaccineDataForaWeek(cowin, pin_code)
+    except Exception as e:
+        print('something wrong while fetching data for a week')
+        print(str(e))
+        time.sleep(60)
+        continue
 
     # Lets filter out the list
     filteredVaccineData = {}
