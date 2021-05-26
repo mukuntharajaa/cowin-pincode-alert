@@ -1,11 +1,6 @@
 # cowin-pincode-alert
 A daemon which can monitor vaccine availability for a particular pincode and push notifications to telegram
 
-
-There are many libraries and telegram bots available. But somehow When I set up alert for interior pincodes, almost all of them failed and did not send me any notification.
-
-So I decided to write up my own daemon which can push notification, if vaccine is available for a particular pincode.
-
 What-this-does:
 - Runs as a daemon monitoring for a pincode ( every 1 minute )
 - If there is any availability, it sends notification to telegram
